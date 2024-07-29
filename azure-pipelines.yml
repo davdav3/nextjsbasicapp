@@ -34,7 +34,7 @@ steps:
 - task: Kubernetes@1
   inputs:
     connectionType: 'Azure Resource Manager'
-    azureSubscription: 'your-azure-service-connection'
+    azureSubscription: 'acr'
     azureResourceGroup: '$(resource_group_name)'
     kubernetesCluster: '$(aks_cluster_name)'
     namespace: 'default'
@@ -43,6 +43,6 @@ steps:
     configuration: '$(Pipeline.Workspace)/manifests/ingress-controller.yaml'
     secretType: 'dockerRegistry'
     containerRegistry: '$(acr_name)'
-    dockerRegistryEndpoint: 'your-acr-service-connection'
+    dockerRegistryEndpoint: 'acr'
     secretName: 'acr-secret'
     forceUpdate: true
