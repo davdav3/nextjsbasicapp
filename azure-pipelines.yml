@@ -4,7 +4,12 @@ trigger:
 pool:
   name: my
 
+
+
 steps:
+- script: echo $env:PATH
+  displayName: 'Print PATH Variable'
+
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'devops'
