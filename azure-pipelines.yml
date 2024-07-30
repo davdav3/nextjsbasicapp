@@ -7,8 +7,10 @@ pool:
 
 
 steps:
-- script: echo $env:PATH
-  displayName: 'Print PATH Variable'
+- powershell: |
+    $env:PATH += ";C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin"
+    Write-Output $env:PATH
+  displayName: 'Set and Print PATH Variable'
 
 - task: AzureCLI@2
   inputs:
