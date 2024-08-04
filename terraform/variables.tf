@@ -5,7 +5,6 @@ variable "resource_group_name" {
 
 variable "location" {
   description = "The Azure location for deploying resources"
-  default     = "eastus"
 }
 
 variable "aks_cluster_name" {
@@ -21,8 +20,4 @@ variable "acr_name" {
 variable "dns_prefix" {
   description = "The DNS prefix for the AKS cluster"
   default     = "myakscluster"
-}
-
-variable "vnet_subnet_id" {
-  description = "The subnet ID for the private network"
 }
