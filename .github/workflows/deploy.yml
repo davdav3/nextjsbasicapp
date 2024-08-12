@@ -51,26 +51,21 @@ jobs:
         docker buildx build --platform linux/amd64 -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
         docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-    - name: Set up Azure CLI
-      uses: azure/cli@v1
-      with:
-        inlineScript: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-
 #    - name: Get AKS credentials
 #      run: |
 #        az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --file $KUBE_CONFIG_PATH
 
-    - name: Deploy to AKS
-      run: |
-        kubectl apply -f k8s/deployment.yaml
-        kubectl apply -f k8s/service.yaml
-        kubectl apply -f k8s/ingress.yaml
-      env:
-        KUBECONFIG: $KUBE_CONFIG_PATH
+ #   - name: Deploy to AKS
+#      run: |
+ #       kubectl apply -f k8s/deployment.yaml
+#        kubectl apply -f k8s/service.yaml
+#        kubectl apply -f k8s/ingress.yaml
+#      env:
+#        KUBECONFIG: $KUBE_CONFIG_PATH
 
-    - name: Verify deployment
-      run: |
-        kubectl rollout status deployment/nextjs-basic-app-deployment 
-        kubectl get pods 
-      env:
-        KUBECONFIG: $KUBE_CONFIG_PATH
+ #   - name: Verify deployment
+#      run: |
+#       kubectl rollout status deployment/nextjs-basic-app-deployment 
+ #       kubectl get pods 
+#      env:
+ #       KUBECONFIG: $KUBE_CONFIG_PATH
