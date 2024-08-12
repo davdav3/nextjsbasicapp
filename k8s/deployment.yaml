@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextjs-basic-app-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nextjs-basic-app
+  template:
+    metadata:
+      labels:
+        app: nextjs-basic-app
+    spec:
+      containers:
+      - name: nextjs-basic-app
+        image: acrhomeworktask.azurecr.io/nextjs:${IMAGE_TAG}
+        ports:
+        - containerPort: 3000
