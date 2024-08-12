@@ -33,7 +33,7 @@ variable "vm_size_two" {
   type        = string
   default     = "Standard_D2s_v3"
 }
-variable "azure_tenant_id" {
+variable "tenant_id" {
   description = "The Azure Active Directory Tenant ID"
   type        = string
 }
