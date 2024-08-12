@@ -2,14 +2,11 @@ provider "azurerm" {
   features {}
 }
 
-provider "kubernetes" {
-  host                   = azurerm_kubernetes_cluster.res-28.kube_config[0].host
-  client_certificate     = base64decode(azurerm_kubernetes_cluster.res-28.kube_config[0].client_certificate)
-  client_key             = base64decode(azurerm_kubernetes_cluster.res-28.kube_config[0].client_key)
-  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.res-28.kube_config[0].cluster_ca_certificate)
-  load_config_file       = false
+provider "helm" {
+  kubernetes {
+    config_path = "~/.kube/config"
+  }
 }
-
 
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
