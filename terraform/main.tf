@@ -16,7 +16,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "res-6" {
   enable_auto_scaling   = true
   eviction_policy       = "Delete"
   kubernetes_cluster_id = "/subscriptions/46108c1e-dcf5-466b-a16c-69228c6b310e/resourceGroups/deployment/providers/Microsoft.ContainerService/managedClusters/akshomeworkcluster"
-  max_count             = 1
+  max_count             = 2
   min_count             = 1
   name                  = "userpool"
   node_taints           = ["kubernetes.azure.com/scalesetpriority=spot:NoSchedule"]
@@ -150,8 +150,9 @@ resource "helm_release" "nginx_ingress" {
 
   set {
     name  = "controller.replicaCount"
-    value = 2
+    value = 1
   }
+
   set {
     name  = "controller.nodeSelector.agentpool"
     value = "userpool"
@@ -159,23 +160,24 @@ resource "helm_release" "nginx_ingress" {
 
   set {
     name  = "controller.tolerations[0].key"
-    value = "CriticalAddonsOnly"
-  }
-
-  set {
-    name  = "controller.tolerations[0].operator"
-    value = "Exists"
-  }
-
-  set {
-    name  = "controller.tolerations[1].key"
     value = "kubernetes.azure.com/scalesetpriority"
   }
 
   set {
-    name  = "controller.tolerations[1].operator"
-    value = "Exists"
+    name  = "controller.tolerations[0].operator"
+    value = "Equal"
   }
+
+  set {
+    name  = "controller.tolerations[0].value"
+    value = "spot"
+  }
+
+  set {
+    name  = "controller.tolerations[0].effect"
+    value = "NoSchedule"
+  }
+
   depends_on = [
     azurerm_kubernetes_cluster.res-28,
   ]
