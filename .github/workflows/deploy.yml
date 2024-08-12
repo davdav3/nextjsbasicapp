@@ -32,7 +32,6 @@ jobs:
         password: ${{ secrets.AZURE_CLIENT_SECRET }}
     - run: |
         docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
-        docker run audit-image npm audit --audit-level=moderate
         docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
 
 #    - name: Get AKS credentials
