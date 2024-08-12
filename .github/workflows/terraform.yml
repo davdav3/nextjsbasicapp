@@ -28,9 +28,11 @@ jobs:
           terraform init
 
     - name: Terraform Plan
+      env:
+        TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
       run: |
           cd terraform
-          terraform plan -input=false -var="tenant_id=${{ secrets.AZURE_TENANT_ID }}"
+          terraform plan -input=false
 
     - name: Terraform Apply
       run: |
