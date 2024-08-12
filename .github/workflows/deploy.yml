@@ -51,7 +51,7 @@ jobs:
       run: |
         envsubst < k8s/deployment.yaml > k8s/deployment.yaml.out
         mv k8s/deployment.yaml.out k8s/deployment.yaml
-        IMAGE_TAG: ${{ github.sha }}
+        IMAGE_TAG: test
 
     - name: Deploy to AKS
       run: |
