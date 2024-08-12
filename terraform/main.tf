@@ -14,7 +14,6 @@ resource "azurerm_resource_group" "rg" {
 }
 resource "azurerm_kubernetes_cluster_node_pool" "res-6" {
   enable_auto_scaling   = true
-  eviction_policy       = "Delete"
   kubernetes_cluster_id = "/subscriptions/46108c1e-dcf5-466b-a16c-69228c6b310e/resourceGroups/deployment/providers/Microsoft.ContainerService/managedClusters/akshomeworkcluster"
   max_count             = 1
   min_count             = 1
