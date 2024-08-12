@@ -9,6 +9,7 @@ env:
   AZURE_CONTAINER_REGISTRY: acrhomeworktask.azurecr.io
   IMAGE_NAME: nextjsbasicapp
   KUBE_CONFIG_PATH: ~/.kube/config
+  EXTERNAL_IP: 20.54.216.148
 
 jobs:
   build:
@@ -18,25 +19,32 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Run Security Audit in Docker
-      run: |
-        docker build -t audit-image --target=builder .
-        docker run audit-image npm audit --audit-level=moderate
-      continue-on-error: true
+#    - name: Run Security Audit in Docker
+#      run: |
+#        docker build -t audit-image --target=builder .
+#        docker run audit-image npm audit --audit-level=moderate
+#      continue-on-error: true
 
-    - name: 'Login to ACR'
-      uses: azure/docker-login@v1
-      with:
-        login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
-        username: ${{ secrets.AZURE_CLIENT_ID }}
-        password: ${{ secrets.AZURE_CLIENT_SECRET }}
-    - run: |
-        docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
-        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
+#    - name: 'Login to ACR'
+#      uses: azure/docker-login@v1
+#      with:
+#        login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
+#        username: ${{ secrets.AZURE_CLIENT_ID }}
+#        password: ${{ secrets.AZURE_CLIENT_SECRET }}
+#    - run: |
+#       docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
+#        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
 
 #    - name: Get AKS credentials
 #      run: |
 #        az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --file $KUBE_CONFIG_PATH
+
+    - name: Substitute variables in Ingress manifest
+      run: |
+        envsubst < k8s/ingress.yaml > k8s/ingress.yaml.out
+        mv k8s/ingress.yaml.out k8s/ingress.yaml
+      env:
+        EXTERNAL_IP: ${{ env.EXTERNAL_IP }}
 
  #   - name: Deploy to AKS
 #      run: |
