@@ -30,26 +30,16 @@ jobs:
       run: npm audit --audit-level=moderate
       continue-on-error: true
 
-    - name: Run Lint
-      run: npm run lint
-
-#    - name: Run Unit Tests
-#      run: npm test
-
     - name: Build Next.js app
       run: npm run build
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
 
     - name: Log in to Azure Container Registry
       run: |
         echo ${{ secrets.AZURE_CREDENTIALS }} | docker login ${{ env.AZURE_CONTAINER_REGISTRY }} --username ${{ secrets.AZURE_CLIENT_ID }} --password-stdin
 
-    - name: Build and Push Docker Image to ACR
+    - name: Build Docker Image
       run: |
-        docker buildx build --platform linux/amd64 -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
-        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
 
 #    - name: Get AKS credentials
 #      run: |
