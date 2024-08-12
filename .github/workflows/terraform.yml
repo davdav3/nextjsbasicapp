@@ -30,12 +30,9 @@ jobs:
     - name: Terraform Plan
       run: |
           cd terraform
-          terraform plan -out plan.tfplan
+          terraform plan -input=false -var="tenant_id=${{ secrets.AZURE_TENANT_ID }}"
 
     - name: Terraform Apply
       run: |
           cd terraform
           #terraform apply -auto-approve plan.tfplan
-
-      env:
-        ARM_TENANT_ID: ${{ env.AZURE_TENANT_ID }}
