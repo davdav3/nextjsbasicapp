@@ -2,14 +2,14 @@ provider "azurerm" {
   features {}
 }
 
-provider "helm" {
-  kubernetes {
-    host                   = azurerm_kubernetes_cluster.res-28.kube_config[0].host
-    client_certificate     = base64decode(azurerm_kubernetes_cluster.res-28.kube_config[0].client_certificate)
-    client_key             = base64decode(azurerm_kubernetes_cluster.res-28.kube_config[0].client_key)
-    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.res-28.kube_config[0].cluster_ca_certificate)
-  }
+provider "kubernetes" {
+  host                   = azurerm_kubernetes_cluster.res-28.kube_config[0].host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.res-28.kube_config[0].client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.res-28.kube_config[0].client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.res-28.kube_config[0].cluster_ca_certificate)
+  load_config_file       = false
 }
+
 
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
@@ -145,11 +145,10 @@ resource "azurerm_container_registry" "acr" {
 }
 
 resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
-  namespace  = "ingress-nginx"
-
+  name            = "nginx-ingress"
+  repository      = "https://kubernetes.github.io/ingress-nginx"
+  chart           = "ingress-nginx"
+  namespace       = "ingress-nginx"
   create_namespace = true
 
   set {
