@@ -18,20 +18,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Run Security Audit
-      run: npm audit --audit-level=moderate
+    - name: Run Security Audit in Docker
+      run: |
+        docker build -t audit-image --target=builder .
+        docker run audit-image npm audit --audit-level=moderate
       continue-on-error: true
-
-    - name: Build Next.js app
-      run: npm run build
 
     - name: 'Login to ACR'
       uses: azure/docker-login@v1
@@ -41,6 +32,7 @@ jobs:
         password: ${{ secrets.AZURE_CLIENT_SECRET }}
     - run: |
         docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
+        docker run audit-image npm audit --audit-level=moderate
         docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
 
 #    - name: Get AKS credentials
