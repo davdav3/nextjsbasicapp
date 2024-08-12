@@ -152,12 +152,30 @@ resource "helm_release" "nginx_ingress" {
     name  = "controller.replicaCount"
     value = 2
   }
-
   set {
     name  = "controller.nodeSelector.agentpool"
     value = "userpool"
   }
 
+  set {
+    name  = "controller.tolerations[0].key"
+    value = "CriticalAddonsOnly"
+  }
+
+  set {
+    name  = "controller.tolerations[0].operator"
+    value = "Exists"
+  }
+
+  set {
+    name  = "controller.tolerations[1].key"
+    value = "kubernetes.azure.com/scalesetpriority"
+  }
+
+  set {
+    name  = "controller.tolerations[1].operator"
+    value = "Exists"
+  }
   depends_on = [
     azurerm_kubernetes_cluster.res-28,
   ]
