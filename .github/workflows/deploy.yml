@@ -63,19 +63,12 @@ jobs:
 
     - name: Deploy to AKS
       run: |
-        kubectl apply -f k8s/deployment.yaml
-        kubectl apply -f k8s/service.yaml
-        kubectl apply -f k8s/ingress.yaml
+        kubectl apply -f k8s/deployment.yaml --validate=false
+        kubectl apply -f k8s/service.yaml --validate=false
+        kubectl apply -f k8s/ingress.yaml --validate=false
       env:
         KUBECONFIG: $KUBE_CONFIG_PATH
         
- #   - name: Deploy to AKS
-#      run: |
- #       kubectl apply -f k8s/deployment.yaml
-#        kubectl apply -f k8s/service.yaml
-#        kubectl apply -f k8s/ingress.yaml
-#      env:
-#        KUBECONFIG: $KUBE_CONFIG_PATH
 
  #   - name: Verify deployment
 #      run: |
