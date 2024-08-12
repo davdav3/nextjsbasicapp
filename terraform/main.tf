@@ -139,8 +139,8 @@ resource "azurerm_container_registry" "acr" {
   sku                 = "Premium"  
 }
 
-resource "helm_release" "nginix-ingress" {
-  name      = "nginix-ingress"    
+resource "helm_release" "ngnix-ingress" {
+  name      = "ngnix-ingress"    
   repository = "https://charts.bitnami.com/bitnami"    
   chart     = "nginx"
   namespace = "kube-system"
