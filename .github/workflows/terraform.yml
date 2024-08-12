@@ -37,3 +37,5 @@ jobs:
           cd terraform
           terraform apply -auto-approve plan.tfplan
 
+      env:
+        ARM_TENANT_ID: ${{ env.AZURE_TENANT_ID }}
