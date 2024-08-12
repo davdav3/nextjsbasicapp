@@ -104,7 +104,7 @@ resource "azurerm_kubernetes_cluster" "res-28" {
   azure_active_directory_role_based_access_control {
     azure_rbac_enabled = true
     managed            = true
-    tenant_id          = var.azure_tenant_id
+    tenant_id          = var.tenant_id != "" ? var.tenant_id : null
   }
   default_node_pool {
     enable_auto_scaling          = true
