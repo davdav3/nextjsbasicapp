@@ -1,17 +1,76 @@
-name: Azure CLI Login Tests
-on: 
+name: Deploy to AKS
+
+on:
   push:
-      branches:
-        - main
+    branches:
+      - main
+
+env:
+  AZURE_CONTAINER_REGISTRY: acrhomeworktask.azurecr.io
+  IMAGE_NAME: nextjsbasicapp
+  KUBE_CONFIG_PATH: ~/.kube/config
+
 jobs:
   build:
     runs-on: self-hosted
-    steps:            
-    - name: "Login to Azure"
-      uses: Azure/login@v1
-    - name: "Upload Static Content to Storage"
-      uses: azure/CLI@v1
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
       with:
-        azcliversion: 2.24.2
-        inlineScript: |
-          az group list       
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run Security Audit
+      run: npm audit --audit-level=moderate
+      continue-on-error: true
+
+    - name: Run Lint
+      run: npm run lint
+
+    - name: Run Unit Tests
+      run: npm test
+
+    - name: Build Next.js app
+      run: npm run build
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Azure Container Registry
+      run: |
+        echo ${{ secrets.AZURE_CREDENTIALS }} | docker login ${{ env.AZURE_CONTAINER_REGISTRY }} --username ${{ secrets.AZURE_CLIENT_ID }} --password-stdin
+
+    - name: Build and Push Docker Image to ACR
+      run: |
+        docker buildx build --platform linux/amd64 -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
+        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+    - name: Set up Azure CLI
+      uses: azure/cli@v1
+      with:
+        inlineScript: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+#    - name: Get AKS credentials
+#      run: |
+#        az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --file $KUBE_CONFIG_PATH
+
+    - name: Deploy to AKS
+      run: |
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+        kubectl apply -f k8s/ingress.yaml
+      env:
+        KUBECONFIG: $KUBE_CONFIG_PATH
+
+    - name: Verify deployment
+      run: |
+        kubectl rollout status deployment/nextjs-basic-app-deployment 
+        kubectl get pods 
+      env:
+        KUBECONFIG: $KUBE_CONFIG_PATH
