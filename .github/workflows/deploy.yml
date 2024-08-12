@@ -46,6 +46,21 @@ jobs:
       env:
         EXTERNAL_IP: ${{ env.EXTERNAL_IP }}
 
+        
+    - name: Substitute variables in Kubernetes manifests
+      run: |
+        envsubst < k8s/deployment.yaml > k8s/deployment.yaml.out
+        mv k8s/deployment.yaml.out k8s/deployment.yaml
+        IMAGE_TAG: ${{ github.sha }}
+
+    - name: Deploy to AKS
+      run: |
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+        kubectl apply -f k8s/ingress.yaml
+      env:
+        KUBECONFIG: $KUBE_CONFIG_PATH
+        
  #   - name: Deploy to AKS
 #      run: |
  #       kubectl apply -f k8s/deployment.yaml
