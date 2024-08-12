@@ -42,19 +42,13 @@ jobs:
         
     - name: Get AKS credentials
       run: |
+        sudo az aks install-cli
         az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }}
-        export KUBECONFIG=$KUBE_CONFIG_PATH
-
-    - name: Debug KUBECONFIG
-      run: |
-        kubectl config view
-        kubectl config current-context
 
     - name: Substitute variables in Ingress manifest
       run: |
         envsubst < k8s/ingress.yaml > k8s/ingress.yaml.out
         mv k8s/ingress.yaml.out k8s/ingress.yaml
-        cat k8s/ingress.yaml
       env:
         EXTERNAL_IP: ${{ env.EXTERNAL_IP }}
 
@@ -63,7 +57,6 @@ jobs:
       run: |
         envsubst < k8s/deployment.yaml > k8s/deployment.yaml.out
         mv k8s/deployment.yaml.out k8s/deployment.yaml
-        cat k8s/deployment.yaml
       env:
         IMAGE_TAG: ${{ github.sha }}
 
