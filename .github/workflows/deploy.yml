@@ -9,7 +9,7 @@ env:
   AZURE_CONTAINER_REGISTRY: acrhomeworktask.azurecr.io
   IMAGE_NAME: nextjsbasicapp
   KUBE_CONFIG_PATH: ~/.kube/config
-  EXTERNAL_IP: 20.54.216.148
+  EXTERNAL_IP: ${{ secrets.EXTERNAL_IP }}
 
 jobs:
   build:
