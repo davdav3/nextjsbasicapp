@@ -139,22 +139,9 @@ resource "azurerm_container_registry" "acr" {
   sku                 = "Premium"  
 }
 
-resource "helm_release" "nginx_ingress" {
-  name            = "nginx-ingress"
-  repository      = "https://kubernetes.github.io/ingress-nginx"
-  chart           = "ingress-nginx"
-  namespace       = "ingress-nginx"
-  create_namespace = true
-
-  set {
-    name  = "controller.replicaCount"
-    value = 1
-  }
-  set {
-    name  = "controller.nodeSelector.agentpool"
-    value = "userpool"
-  }
-  depends_on = [
-    azurerm_kubernetes_cluster.res-28,
-  ]
+resource "helm_release" "nginix-ingress" {
+  name      = "nginix-ingress"    
+  repository = "https://charts.bitnami.com/bitnami"    
+  chart     = "nginx"
+  namespace = "kube-system"
 }
