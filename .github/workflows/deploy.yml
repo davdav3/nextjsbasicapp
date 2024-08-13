@@ -19,21 +19,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-#    - name: Run Security Audit in Docker
-#      run: |
-#        docker build -t audit-image --target=builder .
-#        docker run audit-image npm audit --audit-level=moderate
-#      continue-on-error: true
+    - name: Run Security Audit in Docker
+      run: |
+        docker build -t audit-image --target=builder .
+        docker run audit-image npm audit --audit-level=moderate
+      continue-on-error: true
 
-#    - name: 'Login to ACR'
-#      uses: azure/docker-login@v1
-#      with:
-#        login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
-#        username: ${{ secrets.AZURE_CLIENT_ID }}
-#        password: ${{ secrets.AZURE_CLIENT_SECRET }}
-#    - run: |
-#       docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
-#        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
+    - name: 'Login to ACR'
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
+        username: ${{ secrets.AZURE_CLIENT_ID }}
+        password: ${{ secrets.AZURE_CLIENT_SECRET }}
+    - run: |
+       docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
+        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
 
     - name: Azure CLI Logins
       uses: azure/login@v1
