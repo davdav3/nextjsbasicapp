@@ -88,9 +88,9 @@ jobs:
             k8s-secret
 
 
- #   - name: Verify deployment
-#      run: |
-#       kubectl rollout status deployment/nextjs-basic-app-deployment 
- #       kubectl get pods 
+    - name: Verify deployment
+      run: |
+       kubectl rollout status deployment/nextjs-basic-app-deployment 
+       kubectl get pods 
 #      env:
  #       KUBECONFIG: $KUBE_CONFIG_PATH
