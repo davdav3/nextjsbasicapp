@@ -35,15 +35,15 @@ jobs:
 #       docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
 #        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
 
-    - name: Azure CLI Login
+    - name: Azure CLI Logins
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         
     - name: Get AKS credentials
       run: |
-        sudo az aks install-cli
-        az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }}
+        az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} \
+        --debug
 
     - name: Substitute variables in Ingress manifest
       run: |
@@ -60,8 +60,15 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }}
 
+    - name: Print KUBECONFIG
+      run: cat ~/.kube/config
+
+    - name: Test kubectl connectivity
+      run: kubectl get nodes
+
     - name: Deploy to AKS
       run: |
+        export KUBECONFIG=$KUBE_CONFIG_PATH
         kubectl apply -f k8s/deployment.yaml --validate=false
         kubectl apply -f k8s/service.yaml --validate=false
         kubectl apply -f k8s/ingress.yaml --validate=false
