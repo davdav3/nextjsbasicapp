@@ -54,7 +54,7 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }}
 
-    - uses: azure/setup-kubectl@v4
+    - uses: azure/setup-kubectl@v3
 
     - uses: Azure/aks-set-context@v4
       with:
