@@ -61,28 +61,34 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }}
 
-    - name: Ensure kubelogin is installed
-      run: |
-        kubelogin --version || az aks install-cli
 
-    - name: Authenticate with kubelogin
-      run: |
-        kubelogin convert-kubeconfig -l devicecode
-        
-#    - name: Deploy to AKS
-#      run: |
-#        export KUBECONFIG=$KUBE_CONFIG_PATH
-#        kubectl apply -f k8s/deployment.yaml --validate=false
-#        kubectl apply -f k8s/service.yaml --validate=false
-#        kubectl apply -f k8s/ingress.yaml --validate=false
-#      env:
-#        KUBECONFIG: $KUBE_CONFIG_PATH
+    - uses: azure/setup-kubectl@v4
 
-    - name: Deploy to AKS using az aks command
-      run: |
-        az aks command invoke --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --command 'kubectl apply -f k8s/deployment.yaml --validate=false'
-        az aks command invoke --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --command 'kubectl apply -f k8s/service.yaml --validate=false'
-        az aks command invoke --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --command 'kubectl apply -f k8s/ingress.yaml --validate=false'
+    - uses: Azure/aks-set-context@v4
+      with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
+          resource-group:  ${{ secrets.AZURE_RESOURCE_GROUP }}
+
+    - uses: Azure/k8s-create-secret@v4
+      with:
+          container-registry-url: ${{ env.AZURE_CONTAINER_REGISTRY }}
+          container-registry-username: ${{ secrets.AZURE_CLIENT_ID }}
+          container-registry-password: ${{ secrets.AZURE_CLIENT_SECRET }}
+          secret-name: k8s-secret
+
+    - uses: Azure/k8s-deploy@v5
+      with:
+         action: deploy
+         manifests: |
+            k8s/deployment.yaml
+            k8s/service.yaml
+            k8s/ingress.yaml
+         images: |
+            ${{ env.AZURE_CONTAINER_REGISTRY }}/nextjs:${{ github.sha }}
+         imagepullsecrets: |
+            k8s-secret
+
 
  #   - name: Verify deployment
 #      run: |
