@@ -6,8 +6,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: ${EXTERNAL_IP}
-    http:
+  - http:
       paths:
       - path: /
         pathType: Prefix
