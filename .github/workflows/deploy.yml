@@ -80,10 +80,9 @@ jobs:
 
     - name: Deploy to AKS using az aks command
       run: |
-        az aks command invoke --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --command "kubectl apply -f k8s/deployment.yaml --validate=false"
-        az aks command invoke --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --command "kubectl apply -f k8s/service.yaml --validate=false"
-        az aks command invoke --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --command "kubectl apply -f k8s/ingress.yaml --validate=false"
-
+        az aks command invoke --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --command 'kubectl apply -f k8s/deployment.yaml --validate=false'
+        az aks command invoke --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --command 'kubectl apply -f k8s/service.yaml --validate=false'
+        az aks command invoke --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }} --command 'kubectl apply -f k8s/ingress.yaml --validate=false'
 
  #   - name: Verify deployment
 #      run: |
