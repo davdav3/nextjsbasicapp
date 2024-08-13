@@ -44,6 +44,7 @@ jobs:
       run: |
         az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
         --name ${{ secrets.AKS_CLUSTER_NAME }} --overwrite-existing
+      continue-on-error: true
 
     - name: Substitute variables in Ingress manifest
       run: |
