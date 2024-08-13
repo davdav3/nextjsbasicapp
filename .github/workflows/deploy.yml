@@ -59,12 +59,14 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }}
 
-    - name: Print KUBECONFIG
-      run: cat ~/.kube/config
+    - name: Ensure kubelogin is installed
+      run: |
+        kubelogin --version || az aks install-cli
 
-    - name: Test kubectl connectivity
-      run: kubectl get nodes
-
+    - name: Authenticate with kubelogin
+      run: |
+        kubelogin convert-kubeconfig -l devicecode
+        
     - name: Deploy to AKS
       run: |
         export KUBECONFIG=$KUBE_CONFIG_PATH
