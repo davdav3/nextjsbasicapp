@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: nextjs-basic-app-container
-        image: your-docker-repo/nextjs-basic-app:${IMAGE_TAG}
+        image: acrhomeworktask.azurecr.io/nextjs-basic-app:${IMAGE_TAG}
         ports:
         - containerPort: 3000
         readinessProbe:
