@@ -69,7 +69,7 @@ jobs:
           container-registry-password: ${{ secrets.AZURE_CLIENT_SECRET }}
           secret-name: k8s-secret
 
-    - uses: Azure/k8s-deploy@v5
+    - uses: Azure/k8s-deploy@v6
       with:
          resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
          name:  ${{ secrets.AKS_CLUSTER_NAME }}
