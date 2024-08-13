@@ -40,27 +40,19 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         
-    - name: Get AKS credentials
-      run: |
-        az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-        --name ${{ secrets.AKS_CLUSTER_NAME }} --overwrite-existing
-      continue-on-error: true
-
     - name: Substitute variables in Ingress manifest
       run: |
         envsubst < k8s/ingress.yaml > k8s/ingress.yaml.out
         mv k8s/ingress.yaml.out k8s/ingress.yaml
       env:
         EXTERNAL_IP: ${{ env.EXTERNAL_IP }}
-
-        
+     
     - name: Substitute variables in Kubernetes manifests
       run: |
         envsubst < k8s/deployment.yaml > k8s/deployment.yaml.out
         mv k8s/deployment.yaml.out k8s/deployment.yaml
       env:
         IMAGE_TAG: ${{ github.sha }}
-
 
     - uses: azure/setup-kubectl@v4
 
@@ -79,7 +71,12 @@ jobs:
 
     - uses: Azure/k8s-deploy@v5
       with:
+         resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+         name:  ${{ secrets.AKS_CLUSTER_NAME }}
          action: deploy
+         strategy: basic
+         private-cluster: true
+         
          manifests: |
             k8s/deployment.yaml
             k8s/service.yaml
