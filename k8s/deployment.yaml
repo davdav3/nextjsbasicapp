@@ -13,7 +13,13 @@ spec:
         app: nextjs-basic-app
     spec:
       containers:
-      - name: nextjs-basic-app
-        image: acrhomeworktask.azurecr.io/nextjs:${IMAGE_TAG}
+      - name: nextjs-basic-app-container
+        image: your-docker-repo/nextjs-basic-app:${IMAGE_TAG}
         ports:
         - containerPort: 3000
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
